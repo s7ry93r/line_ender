@@ -27,6 +27,8 @@ module LineEnder
    raise RuntimeError, "Something is wrong with the 'Ending' parameter passed in!" unless valid_ending?(ending)
    output_filepath = get_output_filepath(input_filepath, output_filename)
    puts "output filepath = #{output_filepath}" if @debug
+
+   #this will only happen for an inplace file update
    if (output_filepath == input_filepath)
      raise RuntimeError, "File is not writeable!" unless File.writable?(output_filepath)
    end
@@ -67,7 +69,7 @@ module LineEnder
          puts "in get_output_filepath ... output_filepath = #{output_filepath}" if @debug
        end
      else
-       #the path provided in output_filename is a path ... lets expand it
+       #the output_filename is a path ... lets expand it
        output_path = File.expand_path(output_filename).split(::File::Separator)     
        output_filepath = File.join(output_path)
      end
@@ -90,9 +92,9 @@ module LineEnder
 
  def file_to_string(filepath)
    file = File.open(filepath, "rb")
-   file_to_string = file.read
+   file_string = file.read
    file.close
-   file_to_string.chomp
+   file_string
  end
 
  def valid_ending?(ending) 

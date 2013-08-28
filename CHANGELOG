@@ -1,0 +1,11 @@
+==Change Log
+
+== 0.0.2
+
+* Better Tests
+* Fixed a bug with it chomping the last line ending in the file.
+* NEW utility included in this gem ... called 'le' (short for line-ending) ... put it in your path. It will allow you to convert files right from the command line.
+
+== 0.0.1
+
+* Initial Release

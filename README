@@ -1,0 +1,13 @@
+== Read Me
+
+by Rich Krueger
+
+== Description
+
+This is a line ending mixin gem. It has 3 different use cases:
+
+1. Inplace file update where it will pull in the whole file replace line endings and write over top of the existing file. (If you don't have write permissions to that file ... it will fail). Choose this at your own risk!
+
+2. File update written to a new file (this very often is a safer bet). This is a new gem and a new set of code. I am still testing this code for some edge cases.
+
+3. File read into a filestring and file is fixed in memory ... handy for embedding in your ruby code when you really don't care what the file looked like on disk ... you just want it *fixed* in your program.
