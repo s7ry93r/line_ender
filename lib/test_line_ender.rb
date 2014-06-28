@@ -11,7 +11,6 @@ class TestLineEnder < Test:: Unit::TestCase
 
   def setup
     puts 'setup'
-    @debug = true
     @tle = TLE.new
     @file1 = "file1.txt"
     @file2 = "file2.txt"
@@ -26,8 +25,8 @@ class TestLineEnder < Test:: Unit::TestCase
   
   def test_mac_to_unix_written_to_new_file
     puts "in test: #{__method__} ..."
-    start_value = "a\rb\rc\r"
-    fixed_value = "a\nb\nc\n"
+    start_value = ["a", "b", "c"].join("\r")
+    fixed_value = ["a", "b", "c"].join("\n")
     fs = helper_for_file_test(start_value, fixed_value , LineEnder::Ending::Unix, true)
     assert(File.exists?(@file2), "#{__method__} ... has not written to new file")
     assert(fs == fixed_value, "#{__method__} ... fixed file is not a match to expected value") if File.exists?(@file2)
@@ -35,25 +34,25 @@ class TestLineEnder < Test:: Unit::TestCase
 
   def test_mac_to_windows_write_to_same_file
     puts "in test: #{__method__} ..."
-    start_value = "a\rb\rc\r\r\r"
-    fixed_value = "a\r\nb\r\nc\r\n\r\n\r\n"
+    start_value = ["a", "b", "c"].join("\r")
+    fixed_value = ["a", "b", "c"].join("\r\n")
     fs = helper_for_file_test(start_value, fixed_value , LineEnder::Ending::Windows)
     assert(fs == fixed_value, "#{__method__} ... fixed file is not a match to expected value")
   end
 
   def test_mac_to_windows_string_dump
     puts "in test: #{__method__} ..."
-    start_value = "a\rb\rc\r\r"
-    fixed_value = "a\r\nb\r\nc\r\n\r\n"
+    start_value = ["a", "b", "c"].join("\r")
+    fixed_value = ["a", "b", "c"].join("\r\n")
     helper_write_file(@file1, start_value)
-    helper_for_hexdump("start", @file1) if @debug
+    helper_for_hexdump("start", @file1) if $DEBUG
     fs= @tle.output_to_string(@file1, LineEnder::Ending::Windows)
     assert(fs == fixed_value, "#{__method__} ... fixed file is not a match to expected value")
   end
 
   def helper_for_file_test(start_value, fixed_value, ending_to_use, new_output_file = false)
     helper_write_file(@file1, start_value)
-    helper_for_hexdump("start", @file1) if @debug
+    helper_for_hexdump("start", @file1) if $DEBUG
     if new_output_file
       @tle.output_to_file( @file1, ending_to_use, @file2 )
       fixed_file = @file2
@@ -61,7 +60,7 @@ class TestLineEnder < Test:: Unit::TestCase
       @tle.output_to_file( @file1, ending_to_use)
       fixed_file = @file1
     end
-    helper_for_hexdump("fixed", fixed_file) if File.exists?(fixed_file) && @debug
+    helper_for_hexdump("fixed", fixed_file) if File.exists?(fixed_file) && $DEBUG
     helper_read_file(fixed_file)
   end
 
@@ -78,7 +77,7 @@ class TestLineEnder < Test:: Unit::TestCase
       file = File.open(file_name, "rb")
       file.binmode
       file_string = file.read
-      puts "contents of file #{file_name} as a string ... #{file_string.inspect}" if @debug
+      puts "contents of file #{file_name} as a string ... #{file_string.inspect}" if $DEBUG
     end
     file_string
   end

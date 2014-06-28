@@ -41,19 +41,19 @@ infile = nil
 ending = nil
 opts.each do |opt, arg|
   case opt
-	  when '--windows'
-		  RDoc::usage if ending
-			ending = LineEnder::Ending::Windows
-	  when '--unix'
-		  RDoc::usage if ending
-			ending = LineEnder::Ending::Unix
-	  when '--mac'
-		  RDoc::usage if ending
-			ending = LineEnder::Ending::Mac
-    when '--help'
-      RDoc::usage
-    when '--out'
-		  outfile = arg
+  when '--windows'
+    RDoc::usage if ending
+    ending = LineEnder::Ending::Windows
+  when '--unix'
+    RDoc::usage if ending
+    ending = LineEnder::Ending::Unix
+  when '--mac'
+    RDoc::usage if ending
+    ending = LineEnder::Ending::Mac
+  when '--help'
+    RDoc::usage
+  when '--out'
+    outfile = arg
   end
 end
 
@@ -69,9 +69,9 @@ end
 infile = ARGV.shift
 
 if outfile
-	 output_to_file( infile, ending, outfile )
+  output_to_file( infile, ending, outfile )
 else
-	 output_to_file( infile, ending )
+  output_to_file( infile, ending )
 end
 
 
