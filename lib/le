@@ -1,78 +1,54 @@
-#!/usr/bin/env ruby
-# == Synopsis
-# le: This is program that replaces line endings of a file. It either does an inplace update or  will write to another file with (-o) switch.
-# The default line ending is Unix (-u), but other line endings are Windows (-w) or Mac (-m).
-#    
-# == Note
-#  The -u, -m, and -w flags are mutually exclusive. (Can only choose one).
-#
-# == Usage
-# le [OPTION] ... INPUTFILE
-#
-# -h, --help:    show help
-#
-# -w, --windows: gives the file line endings of carriage return + line feed (\r\n)
-#
-# -u, --unix:    gives the file line endings of line feed (\n) (default)
-#
-# -m, --mac:     gives the file line endings of carriage return (\r)
-#
-# -o, --out:     will write the output to a file with this name
-#
-# INPUTFILE: The file you want to modify the line endings for.
-
+#! /usr/bin/env ruby
 require 'rubygems'
-require 'getoptlong'
-require 'rdoc/usage'
+require 'trollop'
 require 'line_ender'
 
 include LineEnder
 
-opts = GetoptLong.new(
-  [ '--windows', '-w', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--mac', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--unix', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--out', '-o', GetoptLong::OPTIONAL_ARGUMENT ]
-)
-
-outfile = nil
-infile = nil
-ending = nil
-opts.each do |opt, arg|
-  case opt
-  when '--windows'
-    RDoc::usage if ending
-    ending = LineEnder::Ending::Windows
-  when '--unix'
-    RDoc::usage if ending
-    ending = LineEnder::Ending::Unix
-  when '--mac'
-    RDoc::usage if ending
-    ending = LineEnder::Ending::Mac
-  when '--help'
-    RDoc::usage
-  when '--out'
-    outfile = arg
-  end
+opts = Trollop::options do
+  banner <<-EOS
+Synopsis: le is a line ender script to be used from the command prompt if you put it in your path
+Usage: le [flags] [-o outfile] infile
+Note: don't have to set --no-unix flag if looking for different endings ... will override.
+Flags:
+EOS
+  opt :windows, "Windows ending", :default => false
+  opt :unix, "Unix ending", :default => true
+  opt :mac, "Mac ending", :default => false
+  opt :debug, "Debug mode", :default => false
+  opt :output, "Output to another file", :type => :string
 end
+
+p opts if opts[:debug]
+
+outfile = opts[:output]
+ending = nil
+ending = opts[:window] ? LineEnder::Ending::Windows : ending
+ending = opts[:mac] ? LineEnder::Ending::Mac : ending 
+ending = opts[:unix] ? LineEnder::Ending::Unix : ending if ending.nil?
 
 ending = LineEnder::Ending::Unix unless ending
 
 if ARGV.length != 1
-  puts "***---Missing INPUTFILE argument---***"
-	puts
-	RDoc::usage
+  puts "Missing INPUTFILE argument."
+  puts "example: le -m -o fixed.txt somefile.txt"
+  puts "Try the -h flag for help on flags"
   exit 0
 end
 
-infile = ARGV.shift
+infile = ARGV[0]
+
+if opts[:debug]
+  puts "outfile: #{outfile}, #{outfile.inspect}"
+  puts "infile: #{infile}, #{infile.inspect}" 
+  puts "ending: #{ending}"
+end
 
 if outfile
   output_to_file( infile, ending, outfile )
+  puts "Succesfully created #{outfile}"
 else
   output_to_file( infile, ending )
+  puts "Successfully updated #{infile}"
 end
-
-
 

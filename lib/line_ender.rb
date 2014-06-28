@@ -38,7 +38,7 @@ module LineEnder
   end
 
   def output_to_string(input_filepath, ending)
-    raise RuntimeError, "Something is wrong with the input input filepath!" unless valid_filepath?(input_filepath)
+    raise RuntimeError, "Something is wrong with the input filepath!" unless valid_filepath?(input_filepath)
     raise RuntimeError, "Something is wrong with the 'Ending' parameter passed in!" unless valid_ending?(ending)
 
     file_as_string = file_to_string(input_filepath)
