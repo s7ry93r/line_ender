@@ -8,7 +8,7 @@ include LineEnder
 opts = Trollop::options do
   banner <<-EOS
 Synopsis: le is a line ender script to be used from the command prompt if you put it in your path
-Usage: le [flags] [-o outfile] infile
+Usage: le [flags] [-o outfile] inputfile
 Note: don't have to set --no-unix flag if looking for different endings ... will override.
 Flags:
 EOS
@@ -23,14 +23,12 @@ p opts if opts[:debug]
 
 outfile = opts[:output]
 ending = nil
-ending = opts[:window] ? LineEnder::Ending::Windows : ending
+ending = opts[:windows] ? LineEnder::Ending::Windows : ending
 ending = opts[:mac] ? LineEnder::Ending::Mac : ending 
 ending = opts[:unix] ? LineEnder::Ending::Unix : ending if ending.nil?
 
-ending = LineEnder::Ending::Unix unless ending
-
 if ARGV.length != 1
-  puts "Missing INPUTFILE argument."
+  puts "Missing or too many INPUTFILE argument(s)."
   puts "example: le -m -o fixed.txt somefile.txt"
   puts "Try the -h flag for help on flags"
   exit 0
@@ -41,14 +39,26 @@ infile = ARGV[0]
 if opts[:debug]
   puts "outfile: #{outfile}, #{outfile.inspect}"
   puts "infile: #{infile}, #{infile.inspect}" 
-  puts "ending: #{ending}"
+  puts "ending: #{ending.inspect}"
+end
+
+ending_string = ""
+case ending
+when LineEnder::Ending::Windows
+  ending_string = "windows"
+when LineEnder::Ending::Unix
+  ending_string = "unix"
+when LineEnder::Ending::Mac
+  ending_string = "mac"
+else
+  ending_string = "unix"
 end
 
 if outfile
   output_to_file( infile, ending, outfile )
-  puts "Succesfully created #{outfile}"
+  puts "Succesfully created #{outfile}, with #{ending_string}-style line endings!"
 else
   output_to_file( infile, ending )
-  puts "Successfully updated #{infile}"
+  puts "Successfully updated #{infile}, with #{ending_string}-style line endings!"
 end
 
